@@ -1,11 +1,18 @@
 // Put all the javascript code here, that you want to execute after page load.
-const video = document.getElementsByTagName("video");
 
-checktime();
 
-function checktime(){
-    setTimeout(() =>{
-        alert(video[0].currentTime);
-        checktime();
-        }, 3000)
-}
+    // video = document.getElementsByTagName("video");
+
+    // console.log(video[0]);
+    console.log("content loaded!"); 
+
+
+    let contentPort = browser.runtime.connect({name: "portContentScript"});
+
+    contentPort.postMessage({greeting: "content to background"});
+
+    contentPort.onMessage.addListener((message) => {
+        console.log(message.greeting);
+    });
+
+    contentPort.postMessage({greeting: "Iguess the connection is open now."})

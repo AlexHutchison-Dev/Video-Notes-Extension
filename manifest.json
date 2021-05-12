@@ -6,6 +6,9 @@
   "icons": {
     "64": "icons/icon.png"
   },
+  "background": {
+    "scripts": ["background.js"]
+  },
   "content_scripts": [
     {
       "matches": [
@@ -20,7 +23,7 @@
     "default_icon": {
       "64": "icons/icon.png"
     },
-    "default_popup": "browserAction/index.html",
+    "default_popup": "popup/popup.html",
     "default_title": "Video-Notes"
   },
   "page_action": {
