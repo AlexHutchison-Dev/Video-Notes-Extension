@@ -1,23 +1,54 @@
-// browser.runtime.onMessage.addListener(handleMessage);
+console.log("background loaded!");
 
-// console.log("background!");
+var contentLoaded = false;
+var contentTabId;
 
-// function handleMessage(message) {
-//     console.log("hi from background, ", message.message);
-//     browser.runtime.sendMessage({message: "Background calling content"})
-// }
+browser.runtime.onMessage.addListener(handleMessage);
 
-console.log("background loaded!"); 
-
-let contentPort;
-
-function connectToContent(port)
-{
-    contentPort = port;
-    contentPort.postMessage({greeting: "background to content"});
-    contentPort.onMessage.addListener((message) => {
-        console.log(message.greeting);
+function handleMessage(request, sender, sendResponce) {
+  console.log("handleMessage called");
+  if (request.courseInfo) {
+    console.log("background recieved course info");
+    browser.runtime.sendMessage({
+      from: "background",
+      courseInfo: { ...request.courseInfo, url: sender.url },
     });
+  }
+
+  if (request.getCourseInfo) {
+    console.log("background getting courseinfo");
+    browser.tabs.sendMessage(contentTabId, { from: "background", getCourseInfo: true });
+    
+  }
+
+  if (request.getVideoTime)
+  {
+    console.log("background getting getVideoTime");
+    browser.tabs.sendMessage(contentTabId, {from: "background", getVideoTime: true});
+  }
+
+  if (request.videoTime)
+  {
+    browser.runtime.sendMessage({from: "background", videoTime: request.videoTime});
+  }
+
+  if(request.videoSetTime)
+  {
+    console.log("background: settime message recieved");
+    browser.tabs.sendMessage(contentTabId, {from: "background", videoSetTime: true, value: request.videoSetTime});
+  }
+
+  if (request.loaded) {
+    console.log(sender)
+    console.log("contentLoaded" + request);
+    contentLoaded = true;
+    contentTabId = sender.tab.id;
+    // console.log(browser.runtime.hasListener());
+  }
 }
 
-browser.runtime.onConnect.addListener(connectToContent);
+
+
+function sendMessage(messageContent) {
+  browser.runtime.sendMessage({ from: "background", ...messageContent });
+}
