@@ -31,7 +31,8 @@ function handleMessage(request, sender, sendResponce) {
   if (request.videoSetTime){
     console.log("content: set time message recieved");
     console.log(`currentTime: ${video[0].currentTime} requestedTime ${request.value}`);
-
+    console.log(request.value);
+    console.log(request)
     video[0].pause();
     video[0].currentTime = request.value;
     console.log(`currentTime: ${video[0].currentTime} requestedTime ${request.value}`);

@@ -35,7 +35,7 @@ function handleMessage(request, sender, sendResponce) {
   if(request.videoSetTime)
   {
     console.log("background: settime message recieved");
-    browser.tabs.sendMessage(contentTabId, {from: "background", videoSetTime: true, value: request.videoSetTime});
+    browser.tabs.sendMessage(contentTabId, {from: "background", videoSetTime: true, value: request.value});
   }
 
   if (request.loaded) {
