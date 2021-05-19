@@ -9,7 +9,7 @@ console.log(sectionTitle);
 console.log(lectureTitle);
 
 browser.runtime.onMessage.addListener(handleMessage);
-browser.runtime.sendMessage({from: "content", loaded: true});
+browser.runtime.sendMessage({from: "content", loaded: true, message: "loaded"});
 
 function handleMessage(request, sender, sendResponce) {
   console.log("content recieved message: " + request.message);
@@ -18,25 +18,25 @@ function handleMessage(request, sender, sendResponce) {
   if (request.getCourseInfo) {
     console.log("content sending courseInfo")
 
-    browser.runtime.sendMessage({from: "content", courseInfo: {courseTitle: courseTitle , sectionTitle: sectionTitle, lectureTitle: lectureTitle}})
+    browser.runtime.sendMessage({from: "content",message: 'courseInfo', courseInfo: {courseTitle: courseTitle , sectionTitle: sectionTitle, lectureTitle: lectureTitle}})
 
   }
 
   if (request.getVideoTime)
   {
       const videoTime = video[0].currentTime;
-      browser.runtime.sendMessage({from: "content", videoTime: videoTime});
+      browser.runtime.sendMessage({from: "content", videoTime: videoTime, message: "videoTime"});
   }
 
-  if (request.videoSetTime){
+  if (request.message === "videoSetTime"){
     console.log("content: set time message recieved");
+    console.log(request.from);
     console.log(`currentTime: ${video[0].currentTime} requestedTime ${request.value}`);
     console.log(request.value);
-    console.log(request)
-    video[0].pause();
+    
+    
     video[0].currentTime = request.value;
     console.log(`currentTime: ${video[0].currentTime} requestedTime ${request.value}`);
-    video[0].play();
   }
 }
 

@@ -1,6 +1,6 @@
 var courseInfo;
 
-browser.runtime.sendMessage({ from: "popup", getCourseInfo: true });
+browser.runtime.sendMessage({ from: "popup", getCourseInfo: true , message: "getCourseInfo"});
 
 browser.runtime.onMessage.addListener(handleMessage);
 
@@ -11,7 +11,7 @@ noteInput.addEventListener(
   "click",
   (event) => {
     console.log("eventCaptured")
-    browser.runtime.sendMessage({ from: "content", getVideoTime: true });
+    browser.runtime.sendMessage({ from: "content", getVideoTime: true , message: "getVideoTime"});
     
   }
 );
@@ -65,7 +65,7 @@ function createVideoTimeLink(){
     videoSetTime.setAttribute("value", courseInfo.videoTime);
     videoSetTime.setAttribute("id", "link");
     videoSetTime.addEventListener("click", () => {
-      browser.runtime.sendMessage({from: "popup", videoSetTime: true, value: videoSetTime.value});
+      browser.runtime.sendMessage({from: "popup", videoSetTime: true, value: videoSetTime.value, message: "videoSetTime"});
     });
     return videoSetTime;
 }
