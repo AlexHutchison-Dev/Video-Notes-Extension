@@ -1,43 +1,43 @@
 // Put all the javascript code here, that you want to execute after page load.
 console.log("content loaded!");
-const courseTitle = getCourseTitle();
-const sectionTitle = getSectionTitle();
-const lectureTitle = getLectureTitle();
-const video = document.getElementsByTagName("video");
-console.log(courseTitle);
-console.log(sectionTitle);
-console.log(lectureTitle);
+var courseInfo = extractCourseInfo();
+var video = document.getElementsByTagName("video");
 
 browser.runtime.onMessage.addListener(handleMessage);
-browser.runtime.sendMessage({from: "content", loaded: true, message: "loaded"});
+browser.runtime.sendMessage({
+  from: "content",
+  loaded: true,
+  message: "loaded",
+});
+
+window.addEventListener("hashchange", () => {
+  console.log("hashchange");
+  courseInfo = extractCourseInfo();
+  messageProcessor["getCourseInfo"];
+});
 
 function handleMessage(request, sender, sendResponce) {
   console.log("content recieved message: " + request.message);
-
-
-  if (request.getCourseInfo) {
-    console.log("content sending courseInfo")
-
-    browser.runtime.sendMessage({from: "content",message: 'courseInfo', courseInfo: {courseTitle: courseTitle , sectionTitle: sectionTitle, lectureTitle: lectureTitle}})
-
+  if (messageProcessor[request.message]) {
+    messageProcessor[request.message](request, sender);
   }
+}
 
-  if (request.getVideoTime)
-  {
-      const videoTime = video[0].currentTime;
-      browser.runtime.sendMessage({from: "content", videoTime: videoTime, message: "videoTime"});
-  }
+function extractCourseInfo() {
+  console.log("extracting course info");
+  const courseTitle = getCourseTitle();
+  const sectionTitle = getSectionTitle();
+  const lectureTitle = getLectureTitle();
+  const url = window.location.href;
+  console.log(url);
+  video = document.getElementsByTagName("video");
 
-  if (request.message === "videoSetTime"){
-    console.log("content: set time message recieved");
-    console.log(request.from);
-    console.log(`currentTime: ${video[0].currentTime} requestedTime ${request.value}`);
-    console.log(request.value);
-    
-    
-    video[0].currentTime = request.value;
-    console.log(`currentTime: ${video[0].currentTime} requestedTime ${request.value}`);
-  }
+  return {
+    courseTitle: courseTitle,
+    sectionTitle: sectionTitle,
+    lectureTitle: lectureTitle,
+    url: url,
+  };
 }
 
 function getCourseTitle() {
@@ -59,6 +59,37 @@ function getSectionTitle() {
 }
 
 function getLectureTitle() {
-  const lectures = document.getElementsByClassName("curriculum-item-link--is-current--31BPo");
-  return lectures[0].childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].childNodes[0].innerHTML;
+  const lectures = document.getElementsByClassName(
+    "curriculum-item-link--is-current--31BPo"
+  );
+  return lectures[0].childNodes[0].childNodes[1].childNodes[0].childNodes[0]
+    .childNodes[0].childNodes[0].innerHTML;
 }
+
+function sendMessage(messageContent) {
+  browser.runtime.sendMessage({ ...messageContent, from: "content" });
+}
+
+const messageProcessor = {
+  getCourseInfo: () => {
+    console.log("in content object literal getCourseInfo");
+    if (window.location.href !== courseInfo.url) {
+      courseInfo = extractCourseInfo();
+    }
+    sendMessage({
+      message: "courseInfo",
+      courseInfo: {
+        ...courseInfo,
+      },
+    });
+  },
+  getVideoTime: () => {
+    const videoTime = video[0].currentTime;
+    sendMessage({ message: "videoTime", videoTime: videoTime });
+  },
+  videoSetTime: (request) => {
+    video[0].currentTime = request.value;
+    video[0].play();
+    console.log(video[0].currentTime);
+  },
+};

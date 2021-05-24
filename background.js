@@ -5,11 +5,12 @@ var contentTabId;
 
 browser.runtime.onMessage.addListener(handleMessage);
 
-function handleMessage(request, sender, sendResponce) {
+function handleMessage(request, sender) {
+  console.log("request.message: " + request.message);
   messageProcessor[request.message](request, sender);
 }
 
-function sendMessage( messageContent) {
+function sendMessage(messageContent) {
   if (messageContent.from === content) {
     browser.runtime.sendMessage({ from: "background", ...messageContent });
   }
@@ -40,6 +41,7 @@ const messageProcessor = {
   },
   getCourseInfo: (request) => {
     console.log("in objectliteral function getCourseInfo");
+    console.log(contentTabId);
     sendMessage({ ...request });
   },
   courseInfo: (request) => {

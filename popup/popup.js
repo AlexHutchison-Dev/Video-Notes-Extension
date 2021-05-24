@@ -18,10 +18,10 @@ noteInput.addEventListener(
 
 function handleMessage(message) {
   console.log(message);
-  console.log(`courseInfo: ${courseInfo}`);
   if (message.courseInfo && courseInfo !== message.courseInfo) {
     courseInfo = { ...message.courseInfo };
-    console.log(`inside if courseInfo: ${courseInfo}`);
+    console.log(`inside if courseInfo`);
+    console.table(courseInfo);
 
     renderCourseInfo();
   }
@@ -60,6 +60,7 @@ function renderCourseInfo() {
 }
 
 function createVideoTimeLink(){
+  console.log("Inside vreateVideoTimeLink");
   const videoSetTime = document.createElement("button");
     videoSetTime.innerHTML = "Watch Again" + courseInfo.videoTime;
     videoSetTime.setAttribute("value", courseInfo.videoTime);
