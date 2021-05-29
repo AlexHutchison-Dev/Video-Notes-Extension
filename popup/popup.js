@@ -1,3 +1,5 @@
+console.log("popup loaded!");
+
 var courseInfo;
 
 browser.runtime.sendMessage({
@@ -8,11 +10,9 @@ browser.runtime.sendMessage({
 
 browser.runtime.onMessage.addListener(handleMessage);
 
-console.log("popup!");
 const noteInput = document.getElementById("note");
 
 noteInput.addEventListener("click", (event) => {
-  console.log("eventCaptured");
   browser.runtime.sendMessage({
     from: "content",
     getVideoTime: true,
@@ -21,7 +21,6 @@ noteInput.addEventListener("click", (event) => {
 });
 
 function handleMessage(request) {
-  console.log(request);
   messageProcessor[request.message](request);
 }
 
@@ -46,14 +45,13 @@ function renderCourseInfo() {
     document.body.removeChild(heading);
   }
   if (courseInfo.videoTime) {
-    console.log("inside videotime if");
+    consoe.log("inside videotime if");
     const timeLink = createVideoTimeLink();
     document.body.appendChild(timeLink);
   }
 }
 
 function createVideoTimeLink() {
-  console.log("Inside vreateVideoTimeLink");
   const videoSetTime = document.createElement("button");
   videoSetTime.innerHTML = "Watch Again" + courseInfo.videoTime;
   videoSetTime.setAttribute("value", courseInfo.videoTime);
@@ -68,10 +66,9 @@ function createVideoTimeLink() {
   });
   return videoSetTime;
 }
-
 const messageProcessor = {
   courseInfo: (message) => {
-    console.log("inside popup courseInfo" + message);
+    console.log("popup: in objectliteral courseInfo" + message);
     if (courseInfo !== message.courseInfo) {
       courseInfo = { ...message.courseInfo };
       console.log(`inside if courseInfo`);
@@ -81,7 +78,7 @@ const messageProcessor = {
     }
   },
   videoTime: (message) => {
-    console.log("inside popup videoTime" + message);
+    console.log("popup: in objectliteral videoTime" + message);
 
     courseInfo = { ...courseInfo, videoTime: message.videoTime };
     renderCourseInfo();

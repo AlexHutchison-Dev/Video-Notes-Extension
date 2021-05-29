@@ -3,34 +3,27 @@ console.log("content loaded!");
 var courseInfo = extractCourseInfo();
 var video = document.getElementsByTagName("video");
 
-browser.runtime.onMessage.addListener(handleMessage);
 browser.runtime.sendMessage({
   from: "content",
   loaded: true,
   message: "loaded",
 });
 
-window.addEventListener("hashchange", () => {
-  console.log("hashchange");
-  courseInfo = extractCourseInfo();
-  messageProcessor["getCourseInfo"];
-});
+browser.runtime.onMessage.addListener(handleMessage);
+
 
 function handleMessage(request, sender, sendResponce) {
-  console.log("content recieved message: " + request.message);
   if (messageProcessor[request.message]) {
     messageProcessor[request.message](request, sender);
   }
 }
 
 function extractCourseInfo() {
-  console.log("extracting course info");
   const courseTitle = getCourseTitle();
   const sectionTitle = getSectionTitle();
   const lectureTitle = getLectureTitle();
   const url = window.location.href;
-  console.log(url);
-  video = document.getElementsByTagName("video");
+  video = document.getElementsByTagName("video")[0];
 
   return {
     courseTitle: courseTitle,
@@ -72,24 +65,29 @@ function sendMessage(messageContent) {
 
 const messageProcessor = {
   getCourseInfo: () => {
-    console.log("in content object literal getCourseInfo");
-    if (window.location.href !== courseInfo.url) {
-      courseInfo = extractCourseInfo();
+    console.log("content: in content object literal getCourseInfo");
+    if (
+      document.getElementsByClassName(
+        "curriculum-item-link--is-current--31BPo"
+      )
+    ) {
+      sendMessage({
+        message: "courseInfo",
+        courseInfo: {
+          ...courseInfo,
+        },
+      });
+    } else {
+      sendMessage({ message: "notCourse" });
     }
-    sendMessage({
-      message: "courseInfo",
-      courseInfo: {
-        ...courseInfo,
-      },
-    });
   },
   getVideoTime: () => {
-    const videoTime = video[0].currentTime;
-    sendMessage({ message: "videoTime", videoTime: videoTime });
+    console.log("content: in content object literal getVideoTime");
+
+    sendMessage({ message: "videoTime", videoTime: video[0].currentTime });
   },
   videoSetTime: (request) => {
     video[0].currentTime = request.value;
     video[0].play();
-    console.log(video[0].currentTime);
-  },
+  }
 };

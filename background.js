@@ -1,7 +1,6 @@
 console.log("background loaded!");
 
-var contentLoaded = false;
-var contentTabId;
+var contentTabId = false;
 
 browser.runtime.onMessage.addListener(handleMessage);
 
@@ -10,7 +9,7 @@ function handleMessage(request, sender) {
   messageProcessor[request.message](request, sender);
 }
 
-function sendMessage(messageContent) {
+function sendMessage(messageContent, callback) {
   if (messageContent.from === content) {
     browser.runtime.sendMessage({ from: "background", ...messageContent });
   }
@@ -21,31 +20,31 @@ function sendMessage(messageContent) {
 }
 
 const messageProcessor = {
-  loaded: (request, sender) => {
-    console.log("in objectliteral function loaded");
-    contentLoaded = true;
+  loaded: (request, sender, ) => {
+    console.log("backgroung: in objectliteral function loaded");
+
     contentTabId = sender.tab.id;
   },
 
   videoSetTime: (request) => {
-    console.log("in objectliteral function setTime");
+    console.log("backgroung: in objectliteral function setTime");
     sendMessage({ ...request });
   },
   videoTime: (request) => {
-    console.log("in objectliteral function videoTime");
+    console.log("backgroung: in objectliteral function videoTime");
     sendMessage({ ...request });
   },
   getVideoTime: (request) => {
-    console.log("in objectliteral function getVideoTime");
+    console.log("backgroung: in objectliteral function getVideoTime");
     sendMessage({ ...request });
   },
   getCourseInfo: (request) => {
-    console.log("in objectliteral function getCourseInfo");
+    console.log("backgroung: in objectliteral function getCourseInfo");
     console.log(contentTabId);
     sendMessage({ ...request });
   },
   courseInfo: (request) => {
-    console.log("in objectliteral function courseInfo");
+    console.log("backgroung: in objectliteral function courseInfo");
     sendMessage({ ...request });
   },
 };
