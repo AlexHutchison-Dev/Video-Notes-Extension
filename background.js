@@ -1,54 +1,50 @@
 console.log("background loaded!");
 
-var contentLoaded = false;
-var contentTabId;
+var contentTabId = false;
 
 browser.runtime.onMessage.addListener(handleMessage);
 
-function handleMessage(request, sender, sendResponce) {
-  console.log("handleMessage called");
-  if (request.courseInfo) {
-    console.log("background recieved course info");
-    browser.runtime.sendMessage({
-      from: "background",
-      courseInfo: { ...request.courseInfo, url: sender.url },
-    });
-  }
+function handleMessage(request, sender) {
+  console.log("request.message: " + request.message);
+  messageProcessor[request.message](request, sender);
+}
 
-  if (request.getCourseInfo) {
-    console.log("background getting courseinfo");
-    browser.tabs.sendMessage(contentTabId, { from: "background", getCourseInfo: true });
-    
+function sendMessage(messageContent, callback) {
+  if (messageContent.from === content) {
+    browser.runtime.sendMessage({ from: "background", ...messageContent });
   }
+  browser.tabs.sendMessage(contentTabId, {
+    ...messageContent,
+    from: "background",
+  });
+}
 
-  if (request.getVideoTime)
-  {
-    console.log("background getting getVideoTime");
-    browser.tabs.sendMessage(contentTabId, {from: "background", getVideoTime: true});
-  }
+const messageProcessor = {
+  loaded: (request, sender, ) => {
+    console.log("backgroung: in objectliteral function loaded");
 
-  if (request.videoTime)
-  {
-    browser.runtime.sendMessage({from: "background", videoTime: request.videoTime});
-  }
-
-  if(request.videoSetTime)
-  {
-    console.log("background: settime message recieved");
-    browser.tabs.sendMessage(contentTabId, {from: "background", videoSetTime: true, value: request.value});
-  }
-
-  if (request.loaded) {
-    console.log(sender)
-    console.log("contentLoaded" + request);
-    contentLoaded = true;
     contentTabId = sender.tab.id;
-    // console.log(browser.runtime.hasListener());
-  }
-}
+  },
 
-
-
-function sendMessage(messageContent) {
-  browser.runtime.sendMessage({ from: "background", ...messageContent });
-}
+  videoSetTime: (request) => {
+    console.log("backgroung: in objectliteral function setTime");
+    sendMessage({ ...request });
+  },
+  videoTime: (request) => {
+    console.log("backgroung: in objectliteral function videoTime");
+    sendMessage({ ...request });
+  },
+  getVideoTime: (request) => {
+    console.log("backgroung: in objectliteral function getVideoTime");
+    sendMessage({ ...request });
+  },
+  getCourseInfo: (request) => {
+    console.log("backgroung: in objectliteral function getCourseInfo");
+    console.log(contentTabId);
+    sendMessage({ ...request });
+  },
+  courseInfo: (request) => {
+    console.log("backgroung: in objectliteral function courseInfo");
+    sendMessage({ ...request });
+  },
+};

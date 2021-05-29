@@ -1,43 +1,36 @@
 // Put all the javascript code here, that you want to execute after page load.
 console.log("content loaded!");
-const courseTitle = getCourseTitle();
-const sectionTitle = getSectionTitle();
-const lectureTitle = getLectureTitle();
-const video = document.getElementsByTagName("video");
-console.log(courseTitle);
-console.log(sectionTitle);
-console.log(lectureTitle);
+var courseInfo = extractCourseInfo();
+var video = document.getElementsByTagName("video");
+
+browser.runtime.sendMessage({
+  from: "content",
+  loaded: true,
+  message: "loaded",
+});
 
 browser.runtime.onMessage.addListener(handleMessage);
-browser.runtime.sendMessage({from: "content", loaded: true});
+
 
 function handleMessage(request, sender, sendResponce) {
-  console.log("content recieved message: " + request.message);
-
-
-  if (request.getCourseInfo) {
-    console.log("content sending courseInfo")
-
-    browser.runtime.sendMessage({from: "content", courseInfo: {courseTitle: courseTitle , sectionTitle: sectionTitle, lectureTitle: lectureTitle}})
-
+  if (messageProcessor[request.message]) {
+    messageProcessor[request.message](request, sender);
   }
+}
 
-  if (request.getVideoTime)
-  {
-      const videoTime = video[0].currentTime;
-      browser.runtime.sendMessage({from: "content", videoTime: videoTime});
-  }
+function extractCourseInfo() {
+  const courseTitle = getCourseTitle();
+  const sectionTitle = getSectionTitle();
+  const lectureTitle = getLectureTitle();
+  const url = window.location.href;
+  video = document.getElementsByTagName("video")[0];
 
-  if (request.videoSetTime){
-    console.log("content: set time message recieved");
-    console.log(`currentTime: ${video[0].currentTime} requestedTime ${request.value}`);
-    console.log(request.value);
-    console.log(request)
-    video[0].pause();
-    video[0].currentTime = request.value;
-    console.log(`currentTime: ${video[0].currentTime} requestedTime ${request.value}`);
-    video[0].play();
-  }
+  return {
+    courseTitle: courseTitle,
+    sectionTitle: sectionTitle,
+    lectureTitle: lectureTitle,
+    url: url,
+  };
 }
 
 function getCourseTitle() {
@@ -59,6 +52,42 @@ function getSectionTitle() {
 }
 
 function getLectureTitle() {
-  const lectures = document.getElementsByClassName("curriculum-item-link--is-current--31BPo");
-  return lectures[0].childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].childNodes[0].innerHTML;
+  const lectures = document.getElementsByClassName(
+    "curriculum-item-link--is-current--31BPo"
+  );
+  return lectures[0].childNodes[0].childNodes[1].childNodes[0].childNodes[0]
+    .childNodes[0].childNodes[0].innerHTML;
 }
+
+function sendMessage(messageContent) {
+  browser.runtime.sendMessage({ ...messageContent, from: "content" });
+}
+
+const messageProcessor = {
+  getCourseInfo: () => {
+    console.log("content: in content object literal getCourseInfo");
+    if (
+      document.getElementsByClassName(
+        "curriculum-item-link--is-current--31BPo"
+      )
+    ) {
+      sendMessage({
+        message: "courseInfo",
+        courseInfo: {
+          ...courseInfo,
+        },
+      });
+    } else {
+      sendMessage({ message: "notCourse" });
+    }
+  },
+  getVideoTime: () => {
+    console.log("content: in content object literal getVideoTime");
+
+    sendMessage({ message: "videoTime", videoTime: video[0].currentTime });
+  },
+  videoSetTime: (request) => {
+    video[0].currentTime = request.value;
+    video[0].play();
+  }
+};

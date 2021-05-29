@@ -1,34 +1,27 @@
+console.log("popup loaded!");
+
 var courseInfo;
 
-browser.runtime.sendMessage({ from: "popup", getCourseInfo: true });
+browser.runtime.sendMessage({
+  from: "popup",
+  getCourseInfo: true,
+  message: "getCourseInfo",
+});
 
 browser.runtime.onMessage.addListener(handleMessage);
 
-console.log("popup!");
 const noteInput = document.getElementById("note");
 
-noteInput.addEventListener(
-  "click",
-  (event) => {
-    console.log("eventCaptured")
-    browser.runtime.sendMessage({ from: "content", getVideoTime: true });
-    
-  }
-);
+noteInput.addEventListener("click", (event) => {
+  browser.runtime.sendMessage({
+    from: "content",
+    getVideoTime: true,
+    message: "getVideoTime",
+  });
+});
 
-function handleMessage(message) {
-  console.log(message);
-  console.log(`courseInfo: ${courseInfo}`);
-  if (message.courseInfo && courseInfo !== message.courseInfo) {
-    courseInfo = { ...message.courseInfo };
-    console.log(`inside if courseInfo: ${courseInfo}`);
-
-    renderCourseInfo();
-  }
-  if (message.videoTime) {
-    courseInfo = {...courseInfo, videoTime: message.videoTime};
-    renderCourseInfo();
-  }
+function handleMessage(request) {
+  messageProcessor[request.message](request);
 }
 
 function renderCourseInfo() {
@@ -52,20 +45,42 @@ function renderCourseInfo() {
     document.body.removeChild(heading);
   }
   if (courseInfo.videoTime) {
-    console.log("inside videotime if");
+    consoe.log("inside videotime if");
     const timeLink = createVideoTimeLink();
     document.body.appendChild(timeLink);
-    
   }
 }
 
-function createVideoTimeLink(){
+function createVideoTimeLink() {
   const videoSetTime = document.createElement("button");
-    videoSetTime.innerHTML = "Watch Again" + courseInfo.videoTime;
-    videoSetTime.setAttribute("value", courseInfo.videoTime);
-    videoSetTime.setAttribute("id", "link");
-    videoSetTime.addEventListener("click", () => {
-      browser.runtime.sendMessage({from: "popup", videoSetTime: true, value: videoSetTime.value});
+  videoSetTime.innerHTML = "Watch Again" + courseInfo.videoTime;
+  videoSetTime.setAttribute("value", courseInfo.videoTime);
+  videoSetTime.setAttribute("id", "link");
+  videoSetTime.addEventListener("click", () => {
+    browser.runtime.sendMessage({
+      from: "popup",
+      videoSetTime: true,
+      value: videoSetTime.value,
+      message: "videoSetTime",
     });
-    return videoSetTime;
+  });
+  return videoSetTime;
 }
+const messageProcessor = {
+  courseInfo: (message) => {
+    console.log("popup: in objectliteral courseInfo" + message);
+    if (courseInfo !== message.courseInfo) {
+      courseInfo = { ...message.courseInfo };
+      console.log(`inside if courseInfo`);
+      console.table(courseInfo);
+
+      renderCourseInfo();
+    }
+  },
+  videoTime: (message) => {
+    console.log("popup: in objectliteral videoTime" + message);
+
+    courseInfo = { ...courseInfo, videoTime: message.videoTime };
+    renderCourseInfo();
+  },
+};

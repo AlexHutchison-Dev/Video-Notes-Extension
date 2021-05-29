@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.udemy.com/course/*"
+        "*://*.udemy.com/*"
       ],
       "js": [
         "content_script.js"
