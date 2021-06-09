@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.udemy.com/*"
+        "*://*.udemy.com/course/*"
       ],
       "js": [
         "content_script.js"
@@ -23,14 +23,8 @@
     "default_icon": {
       "64": "icons/icon.png"
     },
-    "default_popup": "popup/popup.html",
-    "default_title": "Video-Notes"
-  },
-  "page_action": {
-    "default_icon": {
-      "64": "icons/icon.png"
-    },
-    "default_popup": "pageAction/index.html",
+    "default_popup": "index.html",
     "default_title": "Video-Notes"
   }
+  
 }
