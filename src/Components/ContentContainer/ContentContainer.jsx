@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import CourseTitle from "./CourseTitle";
+import styled from 'styled-components';
+
+import {Container} from './ContentContainerComponents';
+
+import CourseTitle from "../CourseTitle/CourseTitle";
+import LectureTitle from "../LectureTitle/LectureTitle";
+import SectionTitle from "../SectionTitle/SectionTitle";
+
 
 export default function () {
   console.log("popup loaded!");
@@ -41,14 +48,14 @@ export default function () {
   };
 
   return (
-    <div>
+    <Container>
       {courseInfo.courseTitle && 
       <div>
-      <h1>{courseInfo.courseTitle}</h1>
-      <h2>{courseInfo.sectionTitle.replace("&amp;", "&")}</h2>
-      <h3>{courseInfo.lectureTitle}</h3>
+      <CourseTitle title={courseInfo.courseTitle} />
+      <SectionTitle title={courseInfo.sectionTitle.replace("&amp;", "&")} />
+      <LectureTitle title={courseInfo.lectureTitle}/>
       </div>
       }
-    </div>
+    </Container>
   );
 }

@@ -10,7 +10,7 @@ function handleMessage(request, sender) {
 }
 
 function sendMessage(messageContent, callback) {
-  if (messageContent.from === content) {
+  if (messageContent.from === "content") {
     browser.runtime.sendMessage({ from: "background", ...messageContent });
   }
   browser.tabs.sendMessage(contentTabId, {

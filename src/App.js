@@ -1,7 +1,8 @@
 import React from 'react';
 import './App.css';
+import {LectureContextProvider} from './Contexts/LectureContext';
 import Nav from './Components/Nav/Nav';
-import Content from './Components/Content';
+import Content from './Components/ContentContainer/ContentContainer';
 
 function App() {
   
