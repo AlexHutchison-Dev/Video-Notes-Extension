@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import styled from 'styled-components';
+import React, { useEffect, useContext } from "react";
+import { LectureContext } from "../../Contexts/LectureContext";
 
-import {Container} from './ContentContainerComponents';
+import { Container } from "./ContentContainerComponents";
 
 import CourseTitle from "../CourseTitle/CourseTitle";
 import LectureTitle from "../LectureTitle/LectureTitle";
 import SectionTitle from "../SectionTitle/SectionTitle";
-
+import NewNote from "../NewNote/NewNote";
 
 export default function () {
   console.log("popup loaded!");
 
-  const [courseInfo, setCourseInfo] = useState(0);
-  console.log("CourseInfo console.table")
-  console.table(courseInfo);
+  const [lectureContext, changeLectureContext] = useContext(LectureContext);
+  console.log("CourseInfo console.table");
+  console.table(lectureContext.courseInfo);
   useEffect(() => {
     browser.runtime.onMessage.addListener(handleMessage);
 
@@ -33,29 +33,33 @@ export default function () {
     courseInfo: (message) => {
       console.log("popup: in objectliteral courseInfo" + message.courseInfo);
       console.table(message.courseInfo);
-      if (courseInfo !== message.courseInfo) {
-        setCourseInfo({...message.courseInfo});
+      if (lectureContext.courseInfo !== message.courseInfo) {
+        changeLectureContext({ ...message }, () => {
+          console.table(lectureContext);
+        });
         console.log(`inside if courseInfo`);
-        console.log(`Popup message processor courseInfo:  ${courseInfo}`);
-        console.table(courseInfo);
       }
     },
     videoTime: (message) => {
       console.log("popup: in objectliteral videoTime" + message);
 
-      <CourseTitle title={courseInfo.courseTitle} />;
+      <CourseTitle title={lectureContext.courseInfo.courseTitle} />;
     },
   };
 
   return (
     <Container>
-      {courseInfo.courseTitle && 
-      <div>
-      <CourseTitle title={courseInfo.courseTitle} />
-      <SectionTitle title={courseInfo.sectionTitle.replace("&amp;", "&")} />
-      <LectureTitle title={courseInfo.lectureTitle}/>
-      </div>
-      }
+      {lectureContext.courseInfo.courseTitle && (
+        <div>
+          <CourseTitle title={lectureContext.courseInfo.courseTitle} />
+          <SectionTitle
+            title={lectureContext.courseInfo.sectionTitle.replace("&amp;", "&")}
+          />
+          <LectureTitle title={lectureContext.courseInfo.lectureTitle} />
+        </div>
+      )}
+      <NewNote />
+      
     </Container>
   );
 }
