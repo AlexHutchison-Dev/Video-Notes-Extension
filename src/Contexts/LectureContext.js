@@ -14,8 +14,8 @@ export const LectureContextProvider = (props) => {
   const changeLectureContext = (modifier, callback) => {
     console.log("inside updateLectureContext ");
     setLectureContext((prevValue) => {
-      console.log(`changLectureContext modifier title: ${modifier.courseInfo.title} `)
-      console.table(modifier);
+      // console.log(`changLectureContext modifier title: ${modifier.courseInfo.title} `)
+      // console.table(modifier);
       return { ...prevValue, ...modifier };
     });
     callback();

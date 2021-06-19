@@ -8,9 +8,7 @@ function NewNote() {
 
   function handleChange(event) {
     event.preventDefault();
-    console.log(`event: ${event}`);
     setNote(event.target.value);
-    console.log("Value Changed!");
   }
 
   function handleClick(event) {
@@ -19,18 +17,17 @@ function NewNote() {
     var lectureNotes = lectureContext.notes;
     console.log(`Note: ${note}`);
     console.log(lectureNotes);
-    if (lectureNotes.length > 0)
-    {
-    lectureNotes.push(note);
-    }
-    else
-    {
+    
+    if (lectureNotes.length > 0) {
+      lectureNotes.push(note);
+    } else {
       lectureNotes = [note];
     }
 
     console.log(lectureNotes);
-    changeLectureContext({notes: lectureNotes}, () => {
+    changeLectureContext({ notes: lectureNotes }, () => {
       console.log(`ChangeLectureContext callback`);
+      setNote("");
     });
   }
 

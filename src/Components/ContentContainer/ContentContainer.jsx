@@ -7,6 +7,7 @@ import CourseTitle from "../CourseTitle/CourseTitle";
 import LectureTitle from "../LectureTitle/LectureTitle";
 import SectionTitle from "../SectionTitle/SectionTitle";
 import NewNote from "../NewNote/NewNote";
+import NotesContainer from "../NotesContainer/NotesContainer";
 
 export default function () {
   console.log("popup loaded!");
@@ -42,8 +43,7 @@ export default function () {
     },
     videoTime: (message) => {
       console.log("popup: in objectliteral videoTime" + message);
-
-      <CourseTitle title={lectureContext.courseInfo.courseTitle} />;
+      // changeLectureContext({requestedVideoTime: message.videoTime});
     },
   };
 
@@ -59,7 +59,7 @@ export default function () {
         </div>
       )}
       <NewNote />
-      
+      <NotesContainer />
     </Container>
   );
 }
