@@ -23,6 +23,8 @@ export default function () {
       getCourseInfo: true,
       message: "getCourseInfo",
     });
+
+    return () => browser.runtime.removeListener(handleMessage);
   }, []);
 
   function handleMessage(request) {
@@ -42,8 +44,11 @@ export default function () {
       }
     },
     videoTime: (message) => {
-      console.log("popup: in objectliteral videoTime" + message);
-      // changeLectureContext({requestedVideoTime: message.videoTime});
+      console.log("popup: in objectliteral videoTime" + message.videoTime);
+      changeLectureContext({ storedVideoTime: message.videoTime }, () => {
+        console.log("added requested video time to context;");
+        console.table(lectureContext);
+      });
     },
   };
 

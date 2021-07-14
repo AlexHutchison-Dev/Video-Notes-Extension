@@ -5,9 +5,9 @@ function SectionTitle(props) {
   const Title = styled.div`
     border: 1px solid #bbb;
     border-radius: 5px;
-    box-shadow: 1px 1px 1px #555;
-  `;
+    margin: 5px;
 
+  `;
   const TitleText = styled.h2`
     font-size: 1rem;
     font-weight: bold;

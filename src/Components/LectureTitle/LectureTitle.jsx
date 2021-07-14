@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 import styled from "styled-components";
 
 function LectureTitle(props) {
   const Title = styled.div`
     border: 1px solid #bbb;
     border-radius: 5px;
-    box-shadow: 1px 1px 1px #555;
+    margin: 5px;
   `;
 
   const TitleText = styled.h3`

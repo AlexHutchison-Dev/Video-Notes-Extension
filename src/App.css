@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  min-width: 300px;
+  min-height: 500px;
+  
 }
 :is(h1, h2 ,h3, h4, h5, h6) {
   font-family: 'Montserrat', sans-serif;

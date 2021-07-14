@@ -1,12 +1,18 @@
 import React, { useState, createContext } from "react";
 
-export const LectureContext = createContext();
+export const LectureContext = createContext({
+  url: "",
+  courseInfo: {},
+  notes: [],
+  requestedVideoTime: null,
+});
 
 export const LectureContextProvider = (props) => {
   const defaultState = {
     url: "",
     courseInfo: {},
     notes: [],
+    requestedVideoTime: null,
   };
 
   const [lectureContext, setLectureContext] = useState(defaultState);
